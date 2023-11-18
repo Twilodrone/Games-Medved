@@ -12,6 +12,7 @@ const int LEFT = 2;
 const int RIGHT = 3;
 const int REST = 4;
 
+const int HUNTERS_COUNT = 4;
 bool isRunning = true;
 char map[] =
 "====================\n"
@@ -91,18 +92,31 @@ void ChaserMovement(int& x, int& y, int gx, int gy) {
 	}
 
 }
-void Render(int bx, int by, char bs, int tx, int ty, char ts) {
+void Render(int bx, int by, char bs, int tx, int ty, char ts, int* hx, int* hy, char hs) {
 	gotoxy(0, 0);
 	map[by * WIDTH + bx] = bs;
 	map[ty * WIDTH + tx] = ts;
+	for (int i = 0; i < HUNTERS_COUNT; i++)
+	{
+		map[hy[i] * WIDTH + hx[i]] = hs;
+	}
+
 	std::cout << map;
+
 	map[by * WIDTH + bx] = ' ';
 	map[ty * WIDTH + tx] = ' ';
+	for (int i = 0; i < HUNTERS_COUNT; i++)
+	{
+		map[hy[i] * WIDTH + hx[i]] = ' ';
+	}
+
+
+	
 }
 
 struct Character {
 	int dir = REST;
-	char symbol = 'O';
+	char symbol;
 	int x;
 	int y;
 };
@@ -111,31 +125,64 @@ struct Character {
 
 int main()
 {
-	int c_count = 2;
-	int* hunters_x = new int[c_count];
-	int* hunters_y = new int[c_count];
-
+#pragma region Characters
 	Character bear;
 	bear.x = WIDTH / 2;
 	bear.y = HEIGHT / 2;
+	bear.symbol = 'O';
 
 	Character teddy;
 	teddy.x = bear.x + 2;
 	teddy.y = bear.y + 2;
-	teddy.symbol = '*';
+	teddy.symbol = 'o';
 
+	Character hunter[4];
+	hunter->symbol = '*';
+	hunter[0].x = 1;
+	hunter[0].y = 1;
+	hunter[1].x = WIDTH - 3;
+	hunter[1].y = HEIGHT - 2;
+	hunter[2].x = 1;
+	hunter[2].y = HEIGHT - 2;
+	hunter[3].x = WIDTH - 3;
+	hunter[3].y = 1;
+
+#pragma endregion
+
+	int* hunters_x = new int[HUNTERS_COUNT];
+	int* hunters_y = new int[HUNTERS_COUNT];
 	int time = clock();
 	int gametime = 0;
 	while (isRunning) {
 		bear.dir = Listener();
 		if ((clock() - time) / CLOCKS_PER_SEC >= 0.2) {
+
+			for (int i = 0; i < HUNTERS_COUNT; i++)
+			{
+				hunters_x[i] = hunter[i].x;
+				hunters_y[i] = hunter[i].y;
+			}
+
 			Movement(bear.dir, bear.x, bear.y);
 			time = clock();
-			if (gametime % 2 == 0) {
+			if (gametime % 3 == 0) {
 				ChaserMovement(teddy.x, teddy.y, bear.x, bear.y);
 			}
-			Render(bear.x, bear.y, bear.symbol, teddy.x, teddy.y, teddy.symbol);
+			if (gametime % 2 == 0) {
+
+				for (int i = 0; i <	HUNTERS_COUNT ; i++)
+				{
+					ChaserMovement(hunter[i].x, hunter[i].y, teddy.x, teddy.y);
+				}
+					
+
+			}
+			Render(bear.x, bear.y, bear.symbol, teddy.x, teddy.y, teddy.symbol, hunters_x, hunters_y, hunter->symbol);
 			++gametime;
+
+			if (hunter->x == teddy.x && hunter->y == teddy.y) {
+				isRunning = false;
+			}
 		}
 	}
 	gotoxy(1, HEIGHT + 2);
