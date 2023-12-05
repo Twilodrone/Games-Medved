@@ -129,6 +129,9 @@
   <ItemGroup>
     <ClCompile Include="Medved.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Medved.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

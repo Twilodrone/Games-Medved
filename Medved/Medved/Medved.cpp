@@ -215,4 +215,5 @@ int main()
 	}
 	gotoxy(1, HEIGHT + 2);
 	std::cout << "GAME OVER!" << std::endl;
+	MedvedUnitTest
 }
