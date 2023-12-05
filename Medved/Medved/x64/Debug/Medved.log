@@ -1,4 +1,4 @@
 ﻿  Medved.cpp
-C:\Users\matte\source\repos\Medved\Medved\Medved.cpp(31,16): warning C4838: Преобразование из "int" в "SHORT" требует сужающего преобразования.
-C:\Users\matte\source\repos\Medved\Medved\Medved.cpp(31,19): warning C4838: Преобразование из "int" в "SHORT" требует сужающего преобразования.
+C:\Users\matte\source\repos\Medved\Medved\Medved.cpp(29,16): warning C4838: Преобразование из "int" в "SHORT" требует сужающего преобразования.
+C:\Users\matte\source\repos\Medved\Medved\Medved.cpp(29,19): warning C4838: Преобразование из "int" в "SHORT" требует сужающего преобразования.
   Medved.vcxproj -> C:\Users\matte\source\repos\Medved\x64\Debug\Medved.exe

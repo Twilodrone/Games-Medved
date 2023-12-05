@@ -1,7 +1,5 @@
 ﻿#include <iostream>
 #include <Windows.h>
-#include <chrono>
-#include <thread>
 
 const int WIDTH = 21;
 const int HEIGHT = 10;
@@ -76,19 +74,39 @@ void Movement(int& dir, int& x, int& y) {
 		isRunning = false;
 	}
 }
-void ChaserMovement(int& x, int& y, int gx, int gy) {
-	
-	if (x < gx) {
-		++x;
+void ChaserMovement(char chasersymbol, int& x, int& y, int gx, int gy) {
+	if (chasersymbol == 'o') {
+		if (x < gx && abs(gx - x)>1) {
+			++x;
+		}
+		if (x > gx && abs(gx - x) > 1) {
+			--x;
+		}
+		if (y < gy && abs(gy - y) > 1) {
+			++y;
+		}
+		if (y > gy && abs(gy - y) > 1) {
+			--y;
+		}
 	}
-	if (x > gx) {
-		--x;
+	else if (chasersymbol == '*') {
+		if (x < gx) {
+			++x;
+		}
+		if (x > gx) {
+			--x;
+		}
+		if (y < gy) {
+			++y;
+		}
+		if (y > gy) {
+			--y;
+		}
 	}
-	if (y < gy) {
-		++y;
-	}
-	if (y > gy) {
-		--y;
+	else 
+	{
+		x = x;
+		y = y;
 	}
 
 }
@@ -109,13 +127,11 @@ void Render(int bx, int by, char bs, int tx, int ty, char ts, int* hx, int* hy, 
 	{
 		map[hy[i] * WIDTH + hx[i]] = ' ';
 	}
-
-
-	
 }
 
 struct Character {
 	int dir = REST;
+	bool isAlive;
 	char symbol;
 	int x;
 	int y;
@@ -136,8 +152,9 @@ int main()
 	teddy.y = bear.y + 2;
 	teddy.symbol = 'o';
 
-	Character hunter[4];
+	Character hunter[HUNTERS_COUNT];
 	hunter->symbol = '*';
+	hunter->isAlive = true;
 	hunter[0].x = 1;
 	hunter[0].y = 1;
 	hunter[1].x = WIDTH - 3;
@@ -155,7 +172,7 @@ int main()
 	int gametime = 0;
 	while (isRunning) {
 		bear.dir = Listener();
-		if ((clock() - time) / CLOCKS_PER_SEC >= 0.2) {
+		if ((clock() - time) / CLOCKS_PER_SEC >= 0.01) {
 
 			for (int i = 0; i < HUNTERS_COUNT; i++)
 			{
@@ -165,28 +182,37 @@ int main()
 
 			Movement(bear.dir, bear.x, bear.y);
 			time = clock();
-			if (gametime % 3 == 0) {
-				ChaserMovement(teddy.x, teddy.y, bear.x, bear.y);
+
+			if (gametime % 4 == 0) {
+				ChaserMovement(teddy.symbol, teddy.x, teddy.y, bear.x, bear.y);
 			}
-			if (gametime % 2 == 0) {
+
+			if (gametime % 3 == 0) {
 
 				for (int i = 0; i <	HUNTERS_COUNT ; i++)
 				{
-					ChaserMovement(hunter[i].x, hunter[i].y, teddy.x, teddy.y);
+					if (hunter[i].isAlive)
+					{
+						ChaserMovement(hunter->symbol, hunter[i].x, hunter[i].y, teddy.x, teddy.y);
+					}
 				}
-					
+			}
 
+			for (int i = 0; i < HUNTERS_COUNT; i++)
+			{
+				if (hunter[i].x == bear.x && hunter[i].y == bear.y) {
+					hunter[i].x = 0;
+					hunter[i].y = 0;
+					hunter[i].isAlive = false;
+				}
+				if (hunter[i].x == teddy.x && hunter[i].y == teddy.y) {
+					isRunning = false;
+				}
 			}
 			Render(bear.x, bear.y, bear.symbol, teddy.x, teddy.y, teddy.symbol, hunters_x, hunters_y, hunter->symbol);
 			++gametime;
-
-			if (hunter->x == teddy.x && hunter->y == teddy.y) {
-				isRunning = false;
-			}
 		}
 	}
 	gotoxy(1, HEIGHT + 2);
 	std::cout << "GAME OVER!" << std::endl;
 }
-
-
